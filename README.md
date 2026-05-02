@@ -1,10 +1,12 @@
-# GPT Image Playground
+# 十二少AI绘图坊
 
-基于 OpenAI 图像生成接口的图片生成与编辑工具。提供简洁精美的 Web UI，支持文本生图、参考图与遮罩编辑，数据纯本地化存储，带来流畅的历史记录与参数管理体验。
+基于 OpenAI 兼容图像生成接口的图片生成与编辑工具。当前 fork 默认对接 `https://newapi.yushenchuanmei.de5.net`，适合部署成自己的生图站点；API Key 仍由用户在浏览器设置中填写，不写入代码仓库。
 
 > 若需调用非 HTTPS 的内网或本地 HTTP API，请使用 GitHub Pages 版本或自行部署，Vercel 部署的体验版绑定的 `.dev` 域名因安全策略通常要求接口必须为 HTTPS。
 
-[**🌐 Vercel 在线体验**](https://gpt-image-playground.cooksleep.dev) &nbsp;|&nbsp; [**🌐 GitHub Pages 在线体验**](https://cooksleep.github.io/gpt_image_playground)
+默认 API 节点：`https://newapi.yushenchuanmei.de5.net`
+
+项目仓库：`https://github.com/sixiaopangai/gpt_image_playground`
 
 ---
 
@@ -78,13 +80,13 @@
 支持多种部署与开发方式。无论使用哪种方式，你都可以预设默认的 API 节点。
 
 <details>
-<summary><strong>▲ 方式一：Vercel 一键部署 (推荐)</strong></summary>
+<summary><strong>▲ 方式一：Vercel 部署 (推荐)</strong></summary>
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FCookSleep%2Fgpt_image_playground&project-name=gpt-image-playground&repository-name=gpt-image-playground)
+将你自己的 fork 导入 Vercel，Vercel 会自动执行构建并部署静态文件。
 
-点击上方按钮导入仓库即可，Vercel 会自动执行构建并部署静态文件。
+**配置默认 API URL**：在 Vercel 项目的 **Settings → Environment Variables** 中添加 `VITE_DEFAULT_API_URL=https://newapi.yushenchuanmei.de5.net`，然后重新部署即可生效。
 
-**配置默认 API URL**：在 Vercel 项目的 **Settings → Environment Variables** 中添加 `VITE_DEFAULT_API_URL`（如 `https://api.openai.com/v1`），然后重新部署即可生效。
+**可选：配置版本更新提示**：页面默认使用 `sixiaopangai/gpt_image_playground` 检查 Release 更新；如需覆盖，可添加 `VITE_RELEASE_REPO=你的GitHub用户名/你的仓库名`。
 
 **配置自动更新**：
 
@@ -100,7 +102,7 @@
 <details>
 <summary><strong>🐳 方式二：Docker 部署</strong></summary>
 
-官方镜像已发布至 GitHub Container Registry。Docker 部署支持在运行时注入默认配置。
+当前仓库提供 Dockerfile 和 Compose 示例。Docker 部署支持在运行时注入默认配置。
 
 **环境变量说明：**
 
@@ -116,11 +118,14 @@
 **1. Docker CLI 示例**
 
 ```bash
+docker build -f deploy/Dockerfile -t shiershao-ai-image-playground .
+
 docker run -d -p 8080:80 \
-  -e DEFAULT_API_URL=https://api.openai.com/v1 \
-  -e ENABLE_API_PROXY=true \
-  -e API_PROXY_URL=https://api.openai.com/v1 \
-  ghcr.io/cooksleep/gpt_image_playground:latest
+  --name shiershao-ai-image \
+  -e DEFAULT_API_URL=https://newapi.yushenchuanmei.de5.net \
+  -e ENABLE_API_PROXY=false \
+  -e API_PROXY_URL=https://newapi.yushenchuanmei.de5.net \
+  shiershao-ai-image-playground
 ```
 
 *(注：使用 host 网络时加 `--network host`，修改容器监听端口使用 `-e PORT=28080`)*
@@ -129,18 +134,25 @@ docker run -d -p 8080:80 \
 
 ```yaml
 services:
-  gpt-image-playground:
-    image: ghcr.io/cooksleep/gpt_image_playground:latest
+  shiershao-ai-image:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+    image: shiershao-ai-image-playground:latest
     environment:
-      - DEFAULT_API_URL=https://api.openai.com/v1
+      - DEFAULT_API_URL=https://newapi.yushenchuanmei.de5.net
+      - API_PROXY_URL=https://newapi.yushenchuanmei.de5.net
+      - ENABLE_API_PROXY=false
     ports:
       - "8080:80"
     restart: unless-stopped
 ```
 
-**更新说明：**
+仓库内已提供 `deploy/docker-compose.yml`，也可以直接运行：
 
-使用 `latest` 标签时，重新拉取镜像并重启即可更新（如 `docker compose pull && docker compose up -d`）。若需固定版本可使用官方提供的版本号标签（如 `0.2.x`）。
+```bash
+docker compose -f deploy/docker-compose.yml up -d --build
+```
 
 </details>
 
@@ -149,7 +161,7 @@ services:
 
 **1. 环境准备与启动**
 
-你可以在项目根目录新建 `.env.local` 文件配置默认 API URL（如 `VITE_DEFAULT_API_URL=https://api.openai.com/v1`）。然后安装依赖并启动：
+你可以在项目根目录新建 `.env.local` 文件配置默认 API URL（如 `VITE_DEFAULT_API_URL=https://newapi.yushenchuanmei.de5.net`），或复制 `.env.example` 后修改。然后安装依赖并启动：
 
 ```bash
 npm install
@@ -199,11 +211,11 @@ npm run build
 例如，集成到 New API 的聊天系统：
 
 ```text
-https://gpt-image-playground.cooksleep.dev?apiUrl={address}&apiKey={key}
+https://你的生图站点.example.com?apiUrl=https://newapi.yushenchuanmei.de5.net&apiKey={key}
 ```
 
 ```text
-https://cooksleep.github.io/gpt_image_playground?apiUrl={address}&apiKey={key}
+https://你的生图站点.example.com?apiUrl={address}&apiKey={key}
 ```
 
 ---
@@ -219,8 +231,6 @@ https://cooksleep.github.io/gpt_image_playground?apiUrl={address}&apiKey={key}
 
 本项目基于 [MIT License](LICENSE) 开源。
 
+本项目基于上游开源项目二开，遵循原项目 MIT License。
+
 特别致谢：[LINUX DO](https://linux.do)
-
-## ⭐ Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=CookSleep/gpt_image_playground&type=Date)](https://www.star-history.com/#CookSleep/gpt_image_playground&Date)

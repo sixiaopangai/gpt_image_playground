@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import { readRuntimeEnv } from '../lib/runtimeEnv'
+import { SITE_CONFIG } from '../siteConfig'
 
-const REPO = 'CookSleep/gpt_image_playground'
-const API_URL = `https://api.github.com/repos/${REPO}/releases/latest`
+const RELEASE_REPO = readRuntimeEnv(import.meta.env.VITE_RELEASE_REPO) || SITE_CONFIG.releaseRepo
+const API_URL = RELEASE_REPO ? `https://api.github.com/repos/${RELEASE_REPO}/releases/latest` : ''
 
 function compareVersions(a: string, b: string) {
   const aParts = a.split('.').map((part) => Number.parseInt(part, 10) || 0)
@@ -34,6 +36,8 @@ export function useVersionCheck() {
   )
 
   useEffect(() => {
+    if (!RELEASE_REPO) return
+
     let cancelled = false
 
     fetch(API_URL, { headers: { Accept: 'application/vnd.github.v3+json' } })
@@ -48,7 +52,7 @@ export function useVersionCheck() {
         if (version && compareVersions(version, __APP_VERSION__) > 0) {
           setLatestRelease({
             tag,
-            url: data.html_url ?? `https://github.com/${REPO}/releases/latest`,
+            url: data.html_url ?? `https://github.com/${RELEASE_REPO}/releases/latest`,
           })
         }
       })

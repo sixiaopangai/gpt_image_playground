@@ -1,7 +1,7 @@
 {
-  "name": "GPT Image Playground",
-  "short_name": "GPT Image",
-  "description": "GPT Image Playground 图像生成工作台",
+  "name": "十二少AI绘图坊",
+  "short_name": "十二少AI绘图坊",
+  "description": "十二少AI绘图坊",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

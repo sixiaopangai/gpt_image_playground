@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useStore } from '../store'
 import { useVersionCheck } from '../hooks/useVersionCheck'
+import { SITE_CONFIG } from '../siteConfig'
 import HelpModal from './HelpModal'
 
 export default function Header() {
@@ -14,12 +15,12 @@ export default function Header() {
         <div className="flex items-start gap-1">
           <h1 className="text-lg font-bold tracking-tight">
             <a
-              href="https://github.com/CookSleep/gpt_image_playground"
+              href={SITE_CONFIG.repositoryUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-800 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
             >
-              GPT Image Playground
+              {SITE_CONFIG.name}
             </a>
           </h1>
           {hasUpdate && latestRelease && (

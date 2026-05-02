@@ -57,6 +57,16 @@ function orderImagesWithMaskFirst(images: InputImage[], maskTargetImageId: strin
   return next
 }
 
+const LEGACY_DEFAULT_API_URL = 'https://newapi.yushenchuanmei.de5.net/v1'
+
+function migrateStoredSettings(settings: Partial<AppSettings>): Partial<AppSettings> {
+  if (settings.baseUrl?.trim().replace(/\/+$/, '') !== LEGACY_DEFAULT_API_URL) return settings
+  return {
+    ...settings,
+    baseUrl: DEFAULT_SETTINGS.baseUrl,
+  }
+}
+
 // ===== Store 类型 =====
 
 interface AppState {
@@ -271,6 +281,19 @@ export const useStore = create<AppState>()(
     }),
     {
       name: 'gpt-image-playground',
+      merge: (persistedState, currentState) => {
+        const persisted = persistedState as Partial<AppState> | undefined
+        if (!persisted) return currentState
+
+        return {
+          ...currentState,
+          ...persisted,
+          settings: {
+            ...currentState.settings,
+            ...migrateStoredSettings(persisted.settings ?? {}),
+          },
+        }
+      },
       partialize: (state) => ({
         settings: state.settings,
         params: state.params,

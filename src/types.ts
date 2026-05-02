@@ -1,6 +1,7 @@
 // ===== 设置 =====
 
 import { readRuntimeEnv } from './lib/runtimeEnv'
+import { SITE_CONFIG } from './siteConfig'
 
 export type ApiMode = 'images' | 'responses'
 
@@ -14,7 +15,7 @@ export interface AppSettings {
   apiProxy: boolean
 }
 
-const DEFAULT_BASE_URL = readRuntimeEnv(import.meta.env.VITE_DEFAULT_API_URL) || 'https://api.openai.com/v1'
+const DEFAULT_BASE_URL = readRuntimeEnv(import.meta.env.VITE_DEFAULT_API_URL) || SITE_CONFIG.defaultApiUrl
 export const DEFAULT_IMAGES_MODEL = 'gpt-image-2'
 export const DEFAULT_RESPONSES_MODEL = 'gpt-5.5'
 

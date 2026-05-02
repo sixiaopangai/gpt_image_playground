@@ -1,0 +1,14 @@
+services:
+  shiershao-ai-image:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: shiershao-ai-image-playground:latest
+    container_name: shiershao-ai-image
+    environment:
+      DEFAULT_API_URL: https://newapi.yushenchuanmei.de5.net
+      API_PROXY_URL: https://newapi.yushenchuanmei.de5.net
+      ENABLE_API_PROXY: "false"
+    ports:
+      - "8080:80"
+    restart: unless-stopped
