@@ -5,5 +5,5 @@ export const SITE_CONFIG = {
   repositoryUrl: 'https://github.com/sixiaopangai/gpt_image_playground',
   repositoryLabel: '@sixiaopangai',
   releaseRepo: 'sixiaopangai/gpt_image_playground',
-  defaultApiUrl: 'https://newapi.yushenchuanmei.de5.net',
+  defaultApiUrl: 'https://newapi.yushen.indevs.in',
 } as const

@@ -6,8 +6,8 @@ services:
     image: shiershao-ai-image-playground:latest
     container_name: shiershao-ai-image
     environment:
-      DEFAULT_API_URL: https://newapi.yushenchuanmei.de5.net
-      API_PROXY_URL: https://newapi.yushenchuanmei.de5.net
+      DEFAULT_API_URL: https://newapi.yushen.indevs.in
+      API_PROXY_URL: https://newapi.yushen.indevs.in
       ENABLE_API_PROXY: "false"
     ports:
       - "8080:80"

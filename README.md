@@ -1,10 +1,10 @@
 # 十二少AI绘图坊
 
-基于 OpenAI 兼容图像生成接口的图片生成与编辑工具。当前 fork 默认对接 `https://newapi.yushenchuanmei.de5.net`，适合部署成自己的生图站点；API Key 仍由用户在浏览器设置中填写，不写入代码仓库。
+基于 OpenAI 兼容图像生成接口的图片生成与编辑工具。当前 fork 默认对接 `https://newapi.yushen.indevs.in`，适合部署成自己的生图站点；API Key 仍由用户在浏览器设置中填写，不写入代码仓库。
 
 > 若需调用非 HTTPS 的内网或本地 HTTP API，请使用 GitHub Pages 版本或自行部署，Vercel 部署的体验版绑定的 `.dev` 域名因安全策略通常要求接口必须为 HTTPS。
 
-默认 API 节点：`https://newapi.yushenchuanmei.de5.net`
+默认 API 节点：`https://newapi.yushen.indevs.in`
 
 项目仓库：`https://github.com/sixiaopangai/gpt_image_playground`
 
@@ -84,7 +84,7 @@
 
 将你自己的 fork 导入 Vercel，Vercel 会自动执行构建并部署静态文件。
 
-**配置默认 API URL**：在 Vercel 项目的 **Settings → Environment Variables** 中添加 `VITE_DEFAULT_API_URL=https://newapi.yushenchuanmei.de5.net`，然后重新部署即可生效。
+**配置默认 API URL**：在 Vercel 项目的 **Settings → Environment Variables** 中添加 `VITE_DEFAULT_API_URL=https://newapi.yushen.indevs.in`，然后重新部署即可生效。
 
 **可选：配置版本更新提示**：页面默认使用 `sixiaopangai/gpt_image_playground` 检查 Release 更新；如需覆盖，可添加 `VITE_RELEASE_REPO=你的GitHub用户名/你的仓库名`。
 
@@ -122,9 +122,9 @@ docker build -f deploy/Dockerfile -t shiershao-ai-image-playground .
 
 docker run -d -p 8080:80 \
   --name shiershao-ai-image \
-  -e DEFAULT_API_URL=https://newapi.yushenchuanmei.de5.net \
+  -e DEFAULT_API_URL=https://newapi.yushen.indevs.in \
   -e ENABLE_API_PROXY=false \
-  -e API_PROXY_URL=https://newapi.yushenchuanmei.de5.net \
+  -e API_PROXY_URL=https://newapi.yushen.indevs.in \
   shiershao-ai-image-playground
 ```
 
@@ -140,8 +140,8 @@ services:
       dockerfile: deploy/Dockerfile
     image: shiershao-ai-image-playground:latest
     environment:
-      - DEFAULT_API_URL=https://newapi.yushenchuanmei.de5.net
-      - API_PROXY_URL=https://newapi.yushenchuanmei.de5.net
+      - DEFAULT_API_URL=https://newapi.yushen.indevs.in
+      - API_PROXY_URL=https://newapi.yushen.indevs.in
       - ENABLE_API_PROXY=false
     ports:
       - "8080:80"
@@ -161,7 +161,7 @@ docker compose -f deploy/docker-compose.yml up -d --build
 
 **1. 环境准备与启动**
 
-你可以在项目根目录新建 `.env.local` 文件配置默认 API URL（如 `VITE_DEFAULT_API_URL=https://newapi.yushenchuanmei.de5.net`），或复制 `.env.example` 后修改。然后安装依赖并启动：
+你可以在项目根目录新建 `.env.local` 文件配置默认 API URL（如 `VITE_DEFAULT_API_URL=https://newapi.yushen.indevs.in`），或复制 `.env.example` 后修改。然后安装依赖并启动：
 
 ```bash
 npm install
@@ -211,7 +211,7 @@ npm run build
 例如，集成到 New API 的聊天系统：
 
 ```text
-https://你的生图站点.example.com?apiUrl=https://newapi.yushenchuanmei.de5.net&apiKey={key}
+https://你的生图站点.example.com?apiUrl=https://newapi.yushen.indevs.in&apiKey={key}
 ```
 
 ```text
