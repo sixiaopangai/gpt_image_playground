@@ -4,3 +4,6 @@ dev-proxy.config.json
 .env.local
 .env.*.local
 dev-server*.log
+
+.vercel
+.vercel-global
