@@ -1,0 +1,98 @@
+name: Sync upstream daily
+
+on:
+  schedule:
+    # GitHub Actions uses UTC. 20:00 UTC is 04:00 the next day in Asia/Shanghai.
+    - cron: '0 20 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-upstream-main
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify push permission
+        run: git push --dry-run origin HEAD:main
+
+      - name: Fetch upstream
+        run: |
+          git remote add upstream https://github.com/CookSleep/gpt_image_playground.git
+          git fetch upstream main
+
+      - name: Check for upstream updates
+        id: upstream
+        shell: bash
+        run: |
+          if git merge-base --is-ancestor upstream/main HEAD; then
+            echo "has_updates=false" >> "$GITHUB_OUTPUT"
+            echo "Fork already contains the latest upstream commit."
+          else
+            echo "has_updates=true" >> "$GITHUB_OUTPUT"
+            echo "Upstream updates detected."
+          fi
+
+      - name: Merge upstream and restore deployment config
+        if: steps.upstream.outputs.has_updates == 'true'
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git merge --no-commit --no-ff -X theirs upstream/main
+
+          printf '%s\n' \
+            '{' \
+            '  "$schema": "https://openapi.vercel.sh/vercel.json"' \
+            '}' > vercel.json
+          printf '%s\n' \
+            'VITE_DEFAULT_API_URL=https://cpa.yskj.de5.net/v1?codexCli=true' \
+            > .env.production
+
+          git add -A
+
+      - name: Set up Node.js
+        if: steps.upstream.outputs.has_updates == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        if: steps.upstream.outputs.has_updates == 'true'
+        run: npm ci
+
+      - name: Run tests
+        if: steps.upstream.outputs.has_updates == 'true'
+        run: npm test
+
+      - name: Build production bundle
+        if: steps.upstream.outputs.has_updates == 'true'
+        run: npm run build
+
+      - name: Commit and push
+        if: steps.upstream.outputs.has_updates == 'true'
+        shell: bash
+        run: |
+          git commit -m "chore: sync upstream main"
+          git push origin HEAD:main
+
+      - name: Write summary
+        shell: bash
+        run: |
+          if [[ "${{ steps.upstream.outputs.has_updates }}" == "true" ]]; then
+            echo "Upstream changes passed tests and were pushed to main. Vercel deployment will start automatically." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No upstream changes were found. No commit or deployment was created." >> "$GITHUB_STEP_SUMMARY"
+          fi
