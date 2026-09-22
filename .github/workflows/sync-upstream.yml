@@ -57,7 +57,7 @@ jobs:
             '  "$schema": "https://openapi.vercel.sh/vercel.json"' \
             '}' > vercel.json
           printf '%s\n' \
-            'VITE_DEFAULT_API_URL=https://cpa.yskj.de5.net/v1?codexCli=true' \
+            'VITE_DEFAULT_API_URL=https://newapi.fishros.com' \
             > .env.production
 
           git add -A
